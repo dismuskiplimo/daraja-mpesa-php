@@ -34,18 +34,35 @@
             $checkout_request_id = $result->CheckoutRequestID;
 
             // save the transaction
+            $statement = $conn->prepare("INSERT INTO transactions(merchant_request_id, merchant_request_id) VALUES(?,?)");
+
+            // execute the statement
+            try{
+                $statement->execute([$merchant_request_id, $checkout_request_id]);
+
+                // redirect to thank you page
+                header("Location: /thank-you.php");
+            }
+
+            catch(Exception $e){
+                die($e);
+            }
         }
 
         catch(Exception $e){
             die($e);
         }
     }
+
+    // close the connection
+    $conn = null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/style.css">
     <title>MPESA</title>
 </head>
 <body>
