@@ -1,6 +1,4 @@
 <?php 
-    namespace App\Payment\Gateways;
-
     class Mpesa{
         // MPESA Constants
 
@@ -357,14 +355,21 @@
          * Process MPESA Callback
          * 
          * Param 1: request - Raw request body received from API after submitting STK request
+         * Param 2: body_only - Specifies if the request is body only i.e. if the request contains bot header and body, or body only.
          * Throw: Exception if response is invalid or ResultCode != 0
          * Return: JSON encoded response if successfull
          */
 
-        public function process_callback($request){
-            // attempt to split the request (header, body)
-            list($header, $body) = explode("\r\n\r\n", $request, 2);
+        public function process_callback($request, $body_only = true){
+            if(!$body_only){
+                // attempt to split the request (header, body)
+                list($header, $body) = explode("\r\n\r\n", $request, 2);
+            }
 
+            else{
+                $body = $request;
+            }
+            
             // decode the body
             $body = json_decode($body);
 
@@ -418,7 +423,7 @@
                 return '254' . substr($phone, 1);
             }
 
-            throw new \Exception('Invalid Phone Number');
+            throw new \Exception('Invalid Phone Number Provided');
         }
 
         /**
